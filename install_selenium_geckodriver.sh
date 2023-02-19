@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt update && apt install -y firefox
+apt update && apt install -y jq firefox
 INSTALL_DIR="/usr/local/bin"
 json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
 input=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
