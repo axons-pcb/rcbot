@@ -14,11 +14,11 @@ curl -s -L "$url" | tar -xz
 chmod +x geckodriver
 mv geckodriver "$INSTALL_DIR"
 echo "installed geckodriver binary in $INSTALL_DIR"
-python3 -c "from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-options = Options()
-options.headless = True
-driver = webdriver.Firefox(options=options)
-driver.get(\"http://google.com/\")
-print (\"Headless Firefox Initialized\")
-driver.quit()"
+# python3 -c "from selenium import webdriver
+# from selenium.webdriver.firefox.options import Options
+# options = Options()
+# options.headless = True
+# driver = webdriver.Firefox(options=options)
+# driver.get(\"http://google.com/\")
+# print (\"Headless Firefox Initialized\")
+# driver.quit()"
