@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt update && apt install -y jq wget bzip2
+apt update && apt install -y jq wget bzip2 libxtst6 libgtk-3-0 libx11-xcb-dev libdbus-glib-1-2 libxt6 libpci-dev libasound2
 wget -qO ~/FirefoxSetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64"
 sudo tar xjf ~/FirefoxSetup.tar.bz2 -C /opt/
 
