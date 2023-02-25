@@ -1,7 +1,8 @@
 #!/bin/bash
 
-apt update && apt install -y jq wget
-wget -qO ~/Firefox.exe "https://download.mozilla.org/?product=firefox-latest&os=win64"
+apt update && apt install -y jq wget bzip2
+wget -qO ~/FirefoxSetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64"
+sudo tar xjf ~/FirefoxSetup.tar.bz2 -C /opt/
 
 INSTALL_DIR="/usr/local/bin"
 json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
