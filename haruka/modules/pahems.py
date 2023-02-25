@@ -17,6 +17,26 @@ from queue import Queue
 q = Queue(maxsize=10)
 drake = False
 
+def get_driver() -> webdriver.Firefox:
+    driver = None
+
+    # Openining The Browser & Getting To Pahe.in
+    options = webdriver.FirefoxOptions()
+    options.log.level = "trace"
+    options.add_argument("-headless")
+    options.add_argument("-disable-gpu")
+    options.add_argument("-no-sandbox")
+
+    binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
+    try:
+        driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
+                               options=options)
+    except Exception as e:
+        print("Failed to initiate the driver")
+        raise e
+
+    return driver
+
 # CUST_FILTER_HANDLER = MessageHandler(CustomFilters.has_text, reply_filter)
 def pahedl(bot: Bot, update: Update):
     msg = update.effective_message.text
@@ -27,17 +47,7 @@ def pahedl(bot: Bot, update: Update):
     # Printing The Name Of The Movie You Want To Download
     print("\n" + 'Getting link For ' + str(MovieLink) + ' To Download')
 
-    # Openining The Browser & Getting To Pahe.in
-    options = webdriver.FirefoxOptions()
-    options.log.level = "trace"
-    # options.add_argument("-remote-debugging-port=9224")
-    options.add_argument("-headless")
-    options.add_argument("-disable-gpu")
-    options.add_argument("-no-sandbox")
-
-    binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
-    driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
-                               options=options)
+    driver = get_driver()
     driver.get(MovieLink)
     time.sleep(5)
     print(driver.title)
@@ -45,18 +55,15 @@ def pahedl(bot: Bot, update: Update):
 
     # Getting File Name
     if str(update.effective_chat.id) != "-1001581805288":
-        Name = driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/h1/span').text
+        Name = driver.find_element('xpath', '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/h1/span').text
         print("Name: ", Name)
         res += str(Name) + '\n'
 
-        POSTER = str(driver.find_element_by_xpath('//img[@class="imdbwp__img"]').get_attribute('src'))
+        POSTER = str(driver.find_element('xpath', '//img[@class="imdbwp__img"]').get_attribute('src'))
     # res += str(driver.find_element_by_xpath('//div[@class="imdbwp__meta"]').text) + '\n'
 
     # here we go
-    try:
-        nameDiv = driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div')
-    except:
-        nameDiv = driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[1]/div')
+    nameDiv = driver.find_element('xpath', '/html/body/div[1]/div[2]/div/div[1]/div[1]/article/div/div[2]/div[2]/div')
     cText = nameDiv.text
     vers = cText.split("MG")
     driver.quit()
@@ -78,20 +85,7 @@ def pahedl(bot: Bot, update: Update):
             continue
         elif str(update.effective_chat.id) == "-1001581805288" and '1080p' in ver:
             break
-        options = webdriver.FirefoxOptions()
-        options.log.level = "trace"
-        options.add_argument("-remote-debugging-port=9224")
-        options.add_argument("-headless")
-        options.add_argument("-disable-gpu")
-        options.add_argument("-no-sandbox")
-        binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
-        try:
-            driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
-                                   options=options)
-        except Exception:
-            print("Retrying init driver")
-            driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
-                                       options=options)
+        driver = get_driver()
         driver.get(MovieLink)
         print("Getting link")
         time.sleep(5)
@@ -99,7 +93,7 @@ def pahedl(bot: Bot, update: Update):
             for o in range(0, 2):
                 print("Finding red button")
                 try:
-                    GoogleDriveLink = driver.find_elements_by_xpath('//*[@class="shortc-button small red "]')[i]
+                    GoogleDriveLink = driver.find_elements('xpath', '//*[@class="shortc-button small red "]')[i]
                     GoogleDriveLink.location_once_scrolled_into_view
                     GoogleDriveLink.click()
                     print("Clicked red button")
@@ -109,18 +103,20 @@ def pahedl(bot: Bot, update: Update):
             # on intercelestial
             time.sleep(10)
             try:
+                # privacy agreement
                 WebDriverWait(driver, 100).until(
                     EC.element_to_be_clickable(
-                        (By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/button[1]'))).click()
-                print("Disagreed")
+                        (By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/button[3]'))).click()
+                print("Agreed")
             except:
                 pass
-            # driver.find_element_by_xpath("//button[contains(., 'DISAGREE')]").click()
-            # Clicking I Am Not A Robot Button
+
+            # Clicking Ok let's continue Button
+            time.sleep(10)
             try:
                 Robot = WebDriverWait(driver, 100).until(
                     EC.element_to_be_clickable(
-                        (By.XPATH, '/html/body/div[2]/div/div[1]/div/form/div/div[2]/center/img')))
+                        (By.XPATH, '//*[@id="soralink-human-verif-main"]')))
             except:
                 print("Robot not found")
                 driver.quit()
@@ -130,7 +126,7 @@ def pahedl(bot: Bot, update: Update):
             print("Robot Passed")
 
             # Adding 15 Second Pause For Loading The Page
-            time.sleep(15)
+            time.sleep(10)
 
             # Clicking Generate Link Button
             print("Generating Link")
@@ -138,21 +134,21 @@ def pahedl(bot: Bot, update: Update):
                 # //*[@id="generater"]
                 GenerateLink = WebDriverWait(driver, 100).until(
                     EC.element_to_be_clickable(
-                        (By.XPATH, '/html/body/div[1]/div/div[1]/div/div[2]/div[3]/a/img')))
+                        (By.XPATH, '//*[@id="generater"]/img')))
             except:
                 driver.quit()
                 raise Exception("No Generate Link Button")
             GenerateLink.click()
 
             # Adding 15 Second Pause For Loading The Page
-            time.sleep(15)
+            time.sleep(10)
 
             # Clicking Download To Get Redirected To Spacetica
             print("Clicking Download button!:/")
             Down = driver.find_element_by_xpath('//img[@id="showlink"]')
             Down.click()
 
-            time.sleep(15)
+            time.sleep(10)
             print("len", len(driver.window_handles))
             # Switching To The Newly Opened Tab linegee.net
             window_after = driver.window_handles[-1]
@@ -164,13 +160,8 @@ def pahedl(bot: Bot, update: Update):
 
             # Clicking Continue Button On Spacetica
             try:
-                if "Linegee" in driver.title:
-                    Con = WebDriverWait(driver, 60).until(EC.element_to_be_clickable(
-                        (By.XPATH, '/html/body/div[2]/section[2]/div/div/div[1]/div/div[1]/div[3]/center/p/a')))
-                else:
-                    Con = WebDriverWait(driver, 60).until(EC.element_to_be_clickable(
-                        (By.XPATH, '/html/body/section/div/div/div/div[3]/a')
-                    ))
+                Con = WebDriverWait(driver, 60).until(EC.element_to_be_clickable(
+                    (By.XPATH, '/html/body/div[2]/section[2]/div/div/div[1]/div/div[1]/div[3]/center/p/a')))
             except:
                 print("No Continue Button")
                 raise Exception("No Mega")
@@ -490,12 +481,15 @@ def clook(bot: Bot, update: Update):
                 while not drake and not q.empty():
                     drake = True
                     cupdate = q.get()
-                    if 'Season' in cupdate.effective_message.text:
-                        print("It's TV Show")
-                        pahesh(bot, cupdate)
-                    else:
-                        print("It's Movie")
-                        pahedl(bot, cupdate)
+                    try:
+                        if 'Season' in cupdate.effective_message.text:
+                            print("It's TV Show")
+                            pahesh(bot, cupdate)
+                        else:
+                            print("It's Movie")
+                            pahedl(bot, cupdate)
+                    except Exception as e:
+                        print("An Error Occurred | Error: ", e)
                     drake = False
 
 
