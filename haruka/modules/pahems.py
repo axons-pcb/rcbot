@@ -36,7 +36,7 @@ def pahedl(bot: Bot, update: Update):
     options.add_argument("-no-sandbox")
 
     binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
-    driver = webdriver.Firefox(executable_path=os.environ.get('GECKODRIVER_PATH'),
+    driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
                                options=options)
     driver.get(MovieLink)
     time.sleep(5)

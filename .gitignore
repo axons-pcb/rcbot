@@ -19,3 +19,5 @@ okgoogle.png
 log.err
 log.log
 *.backup
+node_modules
+package-lock.*

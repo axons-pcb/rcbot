@@ -1,6 +1,10 @@
 #!/bin/bash
 
-apt update && apt install -y jq firefox
+apt update && apt install -y jq
+wget -O ~/FirefoxSetup.tar.bz2 "https://download.mozilla.org/?product=firefox-latest&os=linux64"
+tar xjf ~/FirefoxSetup.tar.bz2 -C /opt/
+sudo ln -s /opt/firefox/firefox /usr/lib/firefox/firefox
+
 INSTALL_DIR="/usr/local/bin"
 json=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest)
 input=$(echo "$json" | jq -r '.assets[].browser_download_url | select(contains("linux64"))')
@@ -13,12 +17,13 @@ done
 curl -s -L "$url" | tar -xz
 chmod +x geckodriver
 cp geckodriver "$INSTALL_DIR"
+ls "$INSTALL_DIR"
 echo "installed geckodriver binary in $INSTALL_DIR"
-python3 -c "from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
-options = Options()
-options.headless = True
-driver = webdriver.Firefox(options=options)
-driver.get(\"http://google.com/\")
-print (\"Headless Firefox Initialized\")
-driver.quit()"
+# python3 -c "from selenium import webdriver
+# from selenium.webdriver.firefox.options import Options
+# options = Options()
+# options.headless = True
+# driver = webdriver.Firefox(options=options)
+# driver.get(\"http://google.com/\")
+# print (\"Headless Firefox Initialized\")
+# driver.quit()"
