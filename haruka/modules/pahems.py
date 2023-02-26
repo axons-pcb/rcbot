@@ -1,4 +1,4 @@
-from haruka import dispatcher, MESSAGE_DUMP, LOGGER
+from haruka import dispatcher, MESSAGE_DUMP, LOGGER, FIREFOX_BIN, GECKODRIVER_PATH
 from haruka.modules.disable import DisableAbleCommandHandler
 from haruka.modules.helper_funcs.filters import CustomFilters
 from telegram import ParseMode, Update, Bot
@@ -23,13 +23,13 @@ def get_driver() -> webdriver.Firefox:
     # Openining The Browser & Getting To Pahe.in
     options = webdriver.FirefoxOptions()
     options.log.level = "trace"
-    options.add_argument("-headless")
+    options.add_argument("-headless") # comment on local setup
     options.add_argument("-disable-gpu")
     options.add_argument("-no-sandbox")
 
-    binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
+    binary = FirefoxBinary(FIREFOX_BIN)
     try:
-        driver = webdriver.Firefox(firefox_binary=binary, executable_path=os.environ.get('GECKODRIVER_PATH'),
+        driver = webdriver.Firefox(firefox_binary=binary, executable_path=GECKODRIVER_PATH,
                                options=options)
     except Exception as e:
         print("Failed to initiate the driver")
@@ -109,6 +109,7 @@ def pahedl(bot: Bot, update: Update):
                         (By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/button[3]'))).click()
                 print("Agreed")
             except:
+                print("There was no agreement box")
                 pass
 
             # Clicking Ok let's continue Button
@@ -145,13 +146,13 @@ def pahedl(bot: Bot, update: Update):
 
             # Clicking Download To Get Redirected To Spacetica
             print("Clicking Download button!:/")
-            Down = driver.find_element_by_xpath('//img[@id="showlink"]')
+            Down = driver.find_element('xpath', '//img[@id="showlink"]')
             Down.click()
 
             time.sleep(10)
             print("len", len(driver.window_handles))
             # Switching To The Newly Opened Tab linegee.net
-            window_after = driver.window_handles[-1]
+            window_after = driver.window_handles[1]
             driver.switch_to.window(window_after)
             print("On new tab")
 

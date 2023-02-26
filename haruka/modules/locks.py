@@ -53,6 +53,7 @@ REST_GROUP = 2
 
 class CustomCommandHandler(tg.CommandHandler):
     def __init__(self, command, callback, **kwargs):
+        kwargs.pop('admin_ok', None)
         super().__init__(command, callback, **kwargs)
 
     def check_update(self, update):

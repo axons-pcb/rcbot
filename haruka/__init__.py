@@ -59,6 +59,9 @@ if ENV:
     ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
     API_WEATHER = os.environ.get('API_WEATHER', None)
 
+    FIREFOX_BIN = os.environ.get('FIREFOX_BIN')
+    GECKODRIVER_PATH = os.environ.get('GECKODRIVER_PATH')
+
 
 else:
     from haruka.config import Development as Config
@@ -92,6 +95,7 @@ else:
     CERT_PATH = os.environ.get("CERT_PATH")
 
     DB_URI = os.environ.get('DATABASE_URL')
+    DB_URI = Config.SQLALCHEMY_DATABASE_URI
     DONATION_LINK = os.environ.get('DONATION_LINK')
     LOAD = os.environ.get("LOAD", "").split()
     NO_LOAD = os.environ.get("NO_LOAD", "translation").split()
@@ -102,8 +106,11 @@ else:
     ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
     API_WEATHER = os.environ.get('API_WEATHER', None)
 
+    FIREFOX_BIN = Config.FIREFOX_BIN
+    GECKODRIVER_PATH = Config.GECKODRIVER_PATH
+
 SUDO_USERS.add(OWNER_ID)
-SUDO_USERS.add(680915808) #Nitin's id
+# SUDO_USERS.add(680915808) #Nitin's id
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
