@@ -34,3 +34,4 @@ tmdbsimple
 lxml
 selenium
 pyperclip
+Selenium-Screenshot

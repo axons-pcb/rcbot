@@ -9,11 +9,13 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from Screenshot import Screenshot_Clipping
 import time
 import os
 from bs4 import BeautifulSoup as SOUP
 import requests as HTTP
 from queue import Queue
+ss = Screenshot_Clipping.Screenshot()
 q = Queue(maxsize=10)
 drake = False
 
@@ -100,6 +102,20 @@ def pahedl(bot: Bot, update: Update):
                 except:
                     pass
 
+            # close advt tabs
+            # switch to first tab i.e. rn robot tab
+            window_after = driver.window_handles[0]
+            driver.switch_to.window(window_after)
+            # close all other tabs
+            curr=driver.current_window_handle
+            for handle in driver.window_handles:
+               driver.switch_to.window(handle)
+               if handle != curr:
+                  driver.close()
+            # for safety fo back to 0th tab
+            window_after = driver.window_handles[0]
+            driver.switch_to.window(window_after)
+
             # on intercelestial
             time.sleep(10)
             try:
@@ -119,6 +135,9 @@ def pahedl(bot: Bot, update: Update):
                     EC.element_to_be_clickable(
                         (By.XPATH, '//*[@id="soralink-human-verif-main"]')))
             except:
+                ss_name = "ss.png"
+                ss.full_Screenshot(driver, save_path=r'.' , image_name=ss_name)
+                POSTER = ss_name
                 print("Robot not found")
                 driver.quit()
                 raise Exception("No Mega Link")
