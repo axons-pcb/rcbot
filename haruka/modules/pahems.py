@@ -9,13 +9,13 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from Screenshot import Screenshot_Clipping
+from Screenshot import Screenshot
 import time
 import os
 from bs4 import BeautifulSoup as SOUP
 import requests as HTTP
 from queue import Queue
-ss = Screenshot_Clipping.Screenshot()
+ss = Screenshot.Screenshot()
 q = Queue(maxsize=10)
 drake = False
 
